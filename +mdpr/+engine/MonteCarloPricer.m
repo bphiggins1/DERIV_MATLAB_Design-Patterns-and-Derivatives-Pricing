@@ -29,10 +29,11 @@ classdef MonteCarloPricer < mdpr.engine.Pricer
                 itoCorrection);
             % Monte Carlo simulation of final values
             s = rng(obj.RandSeed);
-            spotVals = movedSpot*exp(randn(obj.PathCount,1)*rootVar);
+            spotVals = bsxfun(@times, movedSpot(:)', ...
+                exp(randn(obj.PathCount,1)*rootVar));
             rng(s);
             payOffVals = option.getValue(spotVals);
-            price = exp(-obj.RiskFreeRate*expiry)*mean(payOffVals);
+            price = exp(-obj.RiskFreeRate*expiry)*mean(payOffVals,1)';
         end
     end
     

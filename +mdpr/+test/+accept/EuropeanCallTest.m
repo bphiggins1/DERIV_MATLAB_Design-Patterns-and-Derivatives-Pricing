@@ -32,6 +32,13 @@ classdef EuropeanCallTest < matlab.unittest.TestCase
             price = testCase.calculatePrice();
             testCase.assertLessThan(abs(price-testCase.ExpectedPrice), 0.2);
         end
+        
+        function testCreateChebfunPricerAndPriceCall(testCase)
+            testCase.createChebfunPricer();
+            testCase.createEuropeanCall();
+            price = testCase.calculatePrice();
+            testCase.assertLessThan(abs(price-testCase.ExpectedPrice), 0.2);
+        end
     end
        
     methods
@@ -44,6 +51,17 @@ classdef EuropeanCallTest < matlab.unittest.TestCase
                 'Volatility', obj.Volatility );
             obj.Pricer = mdepin.createApplication( ctx, 'Pricer');
         end
+        
+        function createChebfunPricer(obj)
+            ctx.Pricer = struct(...
+                'class', 'mdpr.engine.ChebfunPricer', ...
+                'Spot', obj.Spot, ...
+                'Volatility', obj.Volatility, ...
+                'LBC', 0, ...
+                'RBC', @(v) diff(v)-1, ...
+                'Domain', [0 200]);
+            obj.Pricer = mdepin.createApplication( ctx, 'Pricer');
+        end        
         
         function createEuropeanCall(obj)
             ctx.Option = struct(...
