@@ -17,11 +17,11 @@ price = pricer.getPrice(option);
 
 subplot(1,2,1)
 plot(spotVals, price);
-title('Option Price')
+title('Option Price (MC)')
 subplot(1,2,2)
 ds = spotVals(2)-spotVals(1);
 plot(spotVals(2:end), diff(price)/ds)
-title('Option Delta')
+title('Option Delta (MC)')
 end
 
 function pricer = iCreatePricer(params)

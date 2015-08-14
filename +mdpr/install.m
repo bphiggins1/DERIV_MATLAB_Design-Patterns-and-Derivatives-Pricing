@@ -40,9 +40,13 @@ isInstalled = exist(className, 'class');
 end
 
 function iInstall(installDir, installName, url)
+fprintf('Installing depdendency %s\n', installName);
+fprintf('  Retrieving zip file %s\n', url);
 unzip(url)
 destDir = fullfile(installDir, installName);
+fprintf('  Moving unzipped files to %s\n', destDir)
 movefile(sprintf('%s-master', installName), destDir);
+fprintf('  Adding to path %s\n\n', destDir);
 addpath(destDir);
 try
     savepath()
@@ -50,4 +54,3 @@ catch ME
     warning('path:nosave', 'Unable to save path: %s', ME.message);
 end
 end
-

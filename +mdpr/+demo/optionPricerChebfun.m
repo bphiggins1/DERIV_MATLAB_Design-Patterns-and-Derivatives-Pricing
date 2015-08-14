@@ -25,10 +25,10 @@ priceFun = pricer.getPriceChebfun(option);
 
 subplot(1,2,1)
 plot(priceFun, [80, 120])
-title('Option Price')
+title('Option Price (CF)')
 subplot(1,2,2)
 plot(diff(priceFun), [80, 120])
-title('Option Delta')
+title('Option Delta (CF)')
 
 end
 
