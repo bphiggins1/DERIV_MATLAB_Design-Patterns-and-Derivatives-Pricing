@@ -21,9 +21,12 @@ classdef ChebfunPricer < mdpr.engine.Pricer
             obj = obj@mdpr.engine.Pricer(config);
         end
         
-        function price = getPrice(obj, option)
+        function v = getPriceChebfun(obj, option)
             % Calculate price using PDE
             % Define domain of spot prices we solve PDE over
+            assert( isa(option, 'mdpr.option.BoundaryConditionDecorator'), ...
+                'type:error', ...
+                'ChebfunPricer only applies to options with boundary conditions specified.')
             spot = chebfun('s', obj.Domain);
             
             expiry = option.getExpiry();
@@ -34,8 +37,8 @@ classdef ChebfunPricer < mdpr.engine.Pricer
             A = chebop(@(s,v) -sigma/2*s.^2.*diff(v,2) ...
                 -r.*s.*diff(v,1) + r.*v, obj.Domain);
             % Boundary conditions
-            A.lbc = obj.LBC;
-            A.rbc = obj.RBC;
+            A.lbc = option.LBC;
+            A.rbc = option.RBC;
             
             % Remove nonhomogeneous boundary conditions by finding a
             % particular solution
@@ -49,6 +52,10 @@ classdef ChebfunPricer < mdpr.engine.Pricer
             
             % Solve for (T-t) = expiry by propagating from T
             v = expm(A, -expiry, wT) + u;
+        end
+        
+        function price = getPrice(obj, option)
+            v = obj.getPriceChebfun(option);
             price = v(obj.Spot);
         end
     end
